@@ -1,0 +1,260 @@
+"use client";
+
+import React, { useState } from "react";
+
+export default function PortfolioTable({ groupedBySector, sectors, totalInvestment, stockData }) {
+  const [collapsed, setCollapsed] = useState({});
+
+  const toggleSector = (sector) =>
+    setCollapsed((p) => ({ ...p, [sector]: !p[sector] }));
+
+  // Deterministic accent color per sector
+  const sectorColor = (name) => {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    const hue = Math.abs(hash) % 360;
+    return `hsl(${hue} 70% 50%)`;
+  };
+
+  const formatCurrency = (v) =>
+    v == null ? "—" : new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(v);
+
+  const Chip = ({ value }) => {
+    if (value == null) return <span className="text-gray-400">—</span>;
+    const cls =
+      value > 0
+        ? "bg-green-100 text-green-700 ring-green-300"
+        : value < 0
+        ? "bg-red-100 text-red-600 ring-red-300"
+        : "bg-gray-100 text-gray-600 ring-gray-300";
+    return (
+      <span className={`px-2 py-0.5 text-xs font-medium rounded-md ring-1 ${cls}`}>
+        {formatCurrency(value)}
+      </span>
+    );
+  };
+
+  const SkeletonCell = () => (
+    <span className="relative inline-block w-12 h-4 overflow-hidden rounded bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 animate-pulse shimmer" />
+  );
+
+  return (    <div className="glass-panel overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm text-slate-200">
+            <thead>
+              <tr className="bg-slate-800/60 backdrop-blur sticky top-0 z-10 text-[11px] md:text-xs uppercase tracking-wide text-slate-300">
+                <th className="px-4 py-3 text-left font-medium">Stock</th>
+                <th className="px-4 py-3 text-right font-medium">Buy Price</th>
+                <th className="px-4 py-3 text-right font-medium">Qty</th>
+                <th className="px-4 py-3 text-right font-medium">Investment</th>
+                <th className="px-4 py-3 text-right font-medium">% Portfolio</th>
+                <th className="px-4 py-3 font-medium">Exchange</th>
+                <th className="px-4 py-3 text-right font-medium">CMP</th>
+                <th className="px-4 py-3 text-right font-medium">Present Value</th>
+                <th className="px-4 py-3 text-right font-medium">Gain / Loss</th>
+                <th className="px-4 py-3 text-right font-medium">P/E</th>
+                <th className="px-4 py-3 text-right font-medium">Earnings</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-700/40">
+              {sectors.map((sector) => {
+                const sectorData = groupedBySector[sector];
+                const { investment, presentValue, gainLoss } = sectorData.totals;
+                const sectorPercent = ((investment / totalInvestment) * 100).toFixed(1);
+                const accent = sectorColor(sector);
+                return (
+                  <React.Fragment key={sector}>
+                    {/* SECTOR GROUP ROW (replaces previous multi-cell summary row) */}
+                    <tr
+                      className="relative cursor-pointer select-none group/sector"
+                      onClick={() => toggleSector(sector)}
+                    >
+                      <td colSpan={11} className="p-0">
+                        <div className="relative flex flex-col gap-2 px-4 py-3 md:flex-row md:items-center md:gap-6 overflow-hidden">
+                          <div className="absolute inset-0 opacity-0 group-hover/sector:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-slate-800/60 via-slate-800/30 to-transparent" />
+                          <div className="absolute inset-0 backdrop-brightness-110 mix-blend-overlay opacity-0 group-hover/sector:opacity-100 transition-opacity" />
+                          {/* Left accent bar */}
+                          <span
+                            className="absolute left-0 top-0 h-full w-1 shadow-[0_0_0_1px_rgba(255,255,255,0.15)]"
+                            style={{ background: accent }}
+                          />
+                          {/* Subtle glow ring */}
+                          <span className="pointer-events-none absolute -inset-px rounded-lg border border-white/5 group-hover/sector:border-white/10" />
+                          {/* Content */}
+                          <div className="flex items-center gap-3 min-w-0">
+                            <span
+                              className={`transition-transform text-slate-300 text-xs inline-flex h-5 w-5 items-center justify-center rounded-md ring-1 ring-white/10 bg-slate-800/40
+                                ${collapsed[sector] ? "" : "rotate-90"}`}
+                            >
+                              ▶
+                            </span>
+                            <h3
+                              className="font-semibold tracking-wide text-sm md:text-base text-slate-100 uppercase flex items-center gap-2"
+                            >
+                              {sector}
+                              <span
+                                className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-slate-800/70 text-slate-300 ring-1 ring-white/10"
+                                title="Sector share of total investment"
+                              >
+                                {sectorPercent}%
+                              </span>
+                            </h3>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[11px] md:text-xs ml-8 md:ml-0">
+                            <span className="flex items-center gap-1 text-slate-400">
+                              <span className="text-slate-500">Investment:</span>
+                              <span className="font-medium text-slate-200">
+                                {formatCurrency(investment)}
+                              </span>
+                            </span>
+                            <span className="flex items-center gap-1 text-slate-400">
+                              <span className="text-slate-500">Value:</span>
+                              <span className="font-medium text-slate-200">
+                                {formatCurrency(presentValue)}
+                              </span>
+                            </span>
+                            <span className="flex items-center gap-1 text-slate-400">
+                              <span className="text-slate-500">Gain/Loss:</span>
+                              <Chip value={gainLoss} />
+                            </span>
+                            <span
+                              className="hidden md:inline-flex items-center gap-1 text-slate-500"
+                              title="Holdings in this sector"
+                            >
+                              {sectorData.stocks.length} stk
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+
+                    {!collapsed[sector] &&
+                      sectorData.stocks.map((obj, idx) => {
+                        const investment = obj.purchasePrice * obj.quantity;
+                        const cmp = stockData[obj.symbol]?.cmp ?? null;
+                        const presentValue = cmp != null ? cmp * obj.quantity : null;
+                        const gainLoss =
+                          presentValue != null ? presentValue - investment : null;
+                        const portfolioPercent = (
+                          (investment / totalInvestment) *
+                          100
+                        ).toFixed(2);
+                        const cellBase =
+                          "px-4 py-2 whitespace-nowrap transition-colors";
+                        return (
+                          <tr
+                            key={obj.symbol}
+              className={`group transition-colors duration-300 ${
+                              idx % 2 === 0
+                ? "bg-slate-900/30"
+                : "bg-slate-900/20"
+              } hover:bg-slate-800/60`}
+                          >
+                            <td className={`${cellBase} text-left`}>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-slate-200">
+                                  {obj.name}
+                                </span>
+                                {stockData[obj.symbol]?.cached && (
+                                  <span
+                                    title="Cached value"
+                                    className="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-300"
+                                  >
+                                    cache
+                                  </span>
+                                )}
+                                {stockData[obj.symbol]?.error && (
+                                  <span
+                                    title="Fetch failed"
+                                    className="text-yellow-400 text-sm"
+                                  >
+                                    ⚠
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className={`${cellBase} text-right text-slate-300`}>
+                              ₹{obj.purchasePrice}
+                            </td>
+                            <td className={`${cellBase} text-right text-slate-300`}>
+                              {obj.quantity}
+                            </td>
+                            <td className={`${cellBase} text-right`}>
+                              {formatCurrency(investment)}
+                            </td>
+                            <td className={`${cellBase} text-right text-slate-400`}>
+                              {portfolioPercent}%
+                            </td>
+                            <td className={`${cellBase} text-center text-slate-300`}>
+                              {obj.exchange}
+                            </td>
+                            <td className={`${cellBase} text-right`}>
+                              {cmp != null && !stockData[obj.symbol]?.error ? (
+                                <span className="tabular-nums text-slate-100">
+                                  {cmp}
+                                </span>
+                              ) : stockData[obj.symbol]?.error ? (
+                                <span
+                                  title="Failed to fetch latest price"
+                                  className="text-yellow-500"
+                                >
+                                  ⚠
+                                </span>
+                              ) : (
+                                <SkeletonCell />
+                              )}
+                            </td>
+                            <td className={`${cellBase} text-right`}>
+                              {presentValue != null
+                                ? formatCurrency(presentValue)
+                                : "—"}
+                            </td>
+                            <td className={`${cellBase} text-right`}>
+                              <Chip value={gainLoss} />
+                            </td>
+                            <td className={`${cellBase} text-right text-slate-300`}>
+                              {stockData[obj.symbol]?.peRatio ?? "—"}
+                            </td>
+                            <td className={`${cellBase} text-right text-slate-300`}>
+                              {stockData[obj.symbol]?.earnings ?? "—"}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </React.Fragment>
+                );
+              })}
+              {sectors.length === 0 && (
+                <tr>
+                  <td
+                    className="px-4 py-10 text-center text-slate-400"
+                    colSpan={11}
+                  >
+                    No data
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div className="px-4 py-3 border-t border-slate-700/40 text-[11px] md:text-xs text-slate-400 flex flex-wrap gap-4">
+          <span>
+            Total Investment:{" "}
+            <span className="text-slate-300 font-medium">
+              {formatCurrency(totalInvestment)}
+            </span>
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" /> Live
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-yellow-400" /> Loading
+          </span>
+        </div>
+      </div>
+  );
+}

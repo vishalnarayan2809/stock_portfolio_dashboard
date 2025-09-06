@@ -23,11 +23,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-cyan-500/30 selection:text-cyan-100`}
       >
-        {children}
+        <div className="relative mx-auto max-w-7xl px-4 md:px-6 py-8 space-y-8 fade-in-up">
+          {children}
+        </div>
       </body>
     </html>
   );

@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio Dashboard
 
-## Getting Started
+A real-time portfolio monitoring dashboard built with **Next.js 15**, **TypeScript**, and **TailwindCSS**.  
+It displays stock holdings grouped by sector, calculates investment metrics, and visualizes allocation using **Recharts**.  
 
-First, run the development server:
+Data is fetched live from **Yahoo Finance (unofficial API)** with caching, batching, and error handling.
 
+---
+
+## 🚀 Features
+- **Live Updates**: Polls Yahoo Finance every 15 seconds for CMP, P/E ratio, and latest earnings.  
+- **Portfolio Table**: Grouped by sector with investment totals, present value, gain/loss (color-coded).  
+- **Sector Pie Chart**: Visualizes sector allocation by value.  
+- **Upload CSV/Excel**: Import your own portfolio (CSV/XLSX) with persistence in localStorage.  
+- **Error Handling**: Inline ⚠ indicators for fetch failures, graceful fallbacks from cache.  
+- **Caching & Rate-Limiting**:  
+  - In-memory cache (TTL = 60s).  
+  - Batch requests in chunks of 20.  
+  - Concurrency limiter (max 3 requests at once for fallbacks).  
+
+---
+
+## 📂 Tech Stack
+- **Frontend**: Next.js 15 (App Router), React 19, TailwindCSS, Recharts  
+- **Backend**: Next.js API Routes, yahoo-finance2, p-limit  
+- **Utilities**: SheetJS (xlsx) for Excel/CSV parsing, localStorage persistence
+
+---
+
+## 📦 Setup
 ```bash
+git clone <your-repo>
+cd portfolio-dashboard
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📊 Usage
+1. By default, loads a sample portfolio (`src/data/portfolio.ts`).  
+2. Upload your own CSV/XLSX (headers: `symbol, name, purchasePrice, quantity, exchange, sector`).  
+3. The dashboard refreshes every 15s and updates CMP, PV, Gain/Loss.  
+4. Sector pie chart updates automatically.  
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## ⚖️ Design Choices & Trade-offs
+- **Yahoo vs Google**: Assignment suggested Google for P/E & earnings. We consolidated on Yahoo (CMP, trailingPE, EPS) because:
+  - Yahoo provides all 3 in one API.
+  - Google Finance has no official API, often blocked/scraped.
+  - For production, we’d use a paid, reliable data provider (e.g., Polygon.io).
+- **In-memory cache**: Simple, fast, but not distributed. For scaling, replace with Redis.  
+- **Rate limiting**:  
+  - Cache TTL = 60s (reduces API hits).  
+  - Batch requests (20 symbols) + concurrency limit (3) balance speed and safety.  
+  - This avoids hitting Yahoo’s undocumented rate limits.
+- **react-table**: Initially considered, but dropped for simplicity. Custom grouped table gave full control over UI/UX and styling.  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📄 Deliverables
+- [x] Next.js + Tailwind app  
+- [x] Live API integration (yahoo-finance2)  
+- [x] Sector grouping + totals  
+- [x] Charting with Recharts  
+- [x] Upload Excel/CSV portfolio  
+- [x] Error handling + caching strategy  
+- [ ] Deployment (suggested: Vercel)
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ⚠️ Limitations
+- Uses unofficial Yahoo Finance API — subject to breakage and rate limits.  
+- In-memory cache means data resets on server restart.  
+- Real-time defined as 15s polling — not streaming. For true real-time, use a provider with WebSockets.  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📸 Screenshots
+(Add screenshots of table + pie chart here)
+
+---

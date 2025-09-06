@@ -1,26 +1,110 @@
 @import "tailwindcss";
 
+/* Color + elevation tokens */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: linear-gradient(135deg,#0f172a 0%,#1e293b 40%,#020617 100%);
+  --foreground: #f1f5f9;
+  --glass-border: hsla(0,0%,100%,0.12);
+  --glass-bg: hsla(217,65%,16%,0.45);
+  --glass-hover: hsla(217,65%,22%,0.55);
+  --glass-radius: 18px;
+  --accent: 198 93% 60%;
+  --danger: 0 84% 63%;
+  --warn: 42 95% 55%;
+  --safe: 142 72% 45%;
+  --grid-color: rgba(255,255,255,0.04);
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cpath fill='%23ffffff0a' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
 }
 
-@theme inline {
+/* Theme tokens mapping (removed @theme for compatibility) */
+:root {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+/* Light mode (unused by default - optional) */
+@media (prefers-color-scheme: light) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #0f172a;
   }
 }
 
 body {
+  min-height: 100dvh;
   background: var(--background);
+  background-attachment: fixed;
+  background-size: cover;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
 }
+
+/* Subtle grid overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg,var(--grid-color) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px;
+  mask: radial-gradient(circle at center, rgba(0,0,0,0.6), transparent 75%);
+  z-index: -2;
+}
+
+/* Noise overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: var(--noise);
+  opacity: .15;
+  mix-blend-mode: overlay;
+  z-index: -1;
+}
+
+/* Glass panel utility */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow: 0 4px 20px -2px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.03) inset;
+  position: relative;
+}
+
+.glass-panel:hover {
+  background: var(--glass-hover);
+}
+
+/* Fancy scrollbars */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 20px; border: 2px solid transparent; background-clip: content-box; }
+*::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); border: 2px solid transparent; background-clip: content-box; }
+
+/* Loading shimmer */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(110deg,#1e293b 10%,#334155 18%,#1e293b 33%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+/* Fade/slide in */
+.fade-in-up { animation: fadeInUp .6s cubic-bezier(.21,1,.29,1); }
+@keyframes fadeInUp { from { opacity:0; transform: translateY(12px);} to { opacity:1; transform: translateY(0);} }
+
+/* Chart specific tweaks */
+.recharts-tooltip-wrapper { backdrop-filter: blur(10px); background: rgba(15,23,42,.85); border: 1px solid var(--glass-border); padding: 6px 10px; border-radius: 10px; }
+
+/* Utility for accent rings */
+.ring-accent { box-shadow: 0 0 0 1px hsl(var(--accent) / .6), 0 0 0 4px hsl(var(--accent) / .15); }
