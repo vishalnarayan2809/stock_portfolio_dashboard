@@ -7,7 +7,7 @@ A modern, real-time portfolio management dashboard built with Next.js, TypeScrip
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=for-the-badge&logo=tailwind-css)
 
 ## 🚀 **Live Demo**
-**[📊 View Live Dashboard](https://stoccckkkportfolio-28lkq6l8r-vishals-projects-97a69eab.vercel.app)**
+**[📊 View Live Dashboard](https://stoccckkkportfolio.vercel.app)**
 
 *Experience the portfolio dashboard with real-time stock data and upload functionality!*
 
@@ -174,7 +174,7 @@ The app includes a comprehensive sample dataset with 15 Indian stocks across var
 
 ### ✅ **Currently Deployed**
 This project is currently live on Vercel at:  
-**[https://stoccckkkportfolio-28lkq6l8r-vishals-projects-97a69eab.vercel.app](https://stoccckkkportfolio-28lkq6l8r-vishals-projects-97a69eab.vercel.app)**
+**[https://stoccckkkportfolio.vercel.app](https://stoccckkkportfolio.vercel.app)**
 
 ### Vercel (Recommended)
 1. Push your code to GitHub

@@ -8,7 +8,7 @@ It allows users to:
 - Upload their own portfolio (CSV/XLSX) with localStorage persistence.
 - Visualize sector allocation with a pie chart.
 
-**🚀 Live Deployment**: [https://stoccckkkportfolio-28lkq6l8r-vishals-projects-97a69eab.vercel.app](https://stoccckkkportfolio-28lkq6l8r-vishals-projects-97a69eab.vercel.app)
+**🚀 Live Deployment**: [https://stoccckkkportfolio.vercel.app](https://stoccckkkportfolio.vercel.app)
 
 ---
 
