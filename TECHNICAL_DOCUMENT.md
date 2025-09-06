@@ -5,8 +5,10 @@ This dashboard was built as part of a portfolio monitoring assignment.
 It allows users to:
 - View holdings grouped by sector.
 - Monitor CMP, investment value, present value, and gain/loss.
-- Upload their own portfolio (CSV/XLSX).
+- Upload their own portfolio (CSV/XLSX) with localStorage persistence.
 - Visualize sector allocation with a pie chart.
+
+**🚀 Live Deployment**: [https://stoccckkkportfolio-28lkq6l8r-vishals-projects-97a69eab.vercel.app](https://stoccckkkportfolio-28lkq6l8r-vishals-projects-97a69eab.vercel.app)
 
 ---
 
@@ -14,17 +16,20 @@ It allows users to:
 - **Frontend**: Next.js App Router with client components for table and chart.  
 - **Backend**: API route `/api/portfolio` fetches stock data.  
 - **Data Source**: Yahoo Finance (via `yahoo-finance2` npm library).  
+- **Deployment**: Vercel with serverless functions for API routes.
+- **Storage**: LocalStorage for persistent portfolio data across sessions.  
 
 ---
 
 ## Data Flow
 1. **Client polling** every 15 seconds requests `/api/portfolio?symbols=AAPL,MSFT,...`.  
-2. **API Route**:
+2. **API Route** (deployed as Vercel serverless function):
    - Checks in-memory cache.  
    - Batch fetches symbols in chunks of 20 from Yahoo.  
    - On errors, retries with per-symbol fallback (concurrency-limited).  
    - Returns JSON results with flags (`cached`, `error`, `lastFetchedAt`).  
 3. **Frontend** updates table + pie chart using new data.
+4. **Upload feature** processes Excel/CSV files and stores data in localStorage for persistence.
 
 ---
 
@@ -61,7 +66,7 @@ It allows users to:
 - Data may lag up to 60s (due to cache TTL).  
 - No WebSocket/streaming — true tick-level updates not possible.  
 - Yahoo Finance API is unofficial and may break without notice.  
-- Deployment not included (tested locally).  
+- ✅ **Deployed successfully** to Vercel with full functionality.
 
 ---
 
@@ -69,4 +74,14 @@ It allows users to:
 - Add Redis or Upstash for distributed caching.  
 - Add proper error banners and retry UI for failed fetches.  
 - Replace Yahoo with a stable paid data source.  
-- Deploy to Vercel for live demo.  
+- Add WebSocket support for real-time streaming data.
+- Implement user authentication and portfolio sharing.
+
+---
+
+## Deployment Notes
+- **Platform**: Vercel (optimal for Next.js)
+- **API Routes**: Deployed as serverless functions
+- **Static Assets**: CDN-optimized
+- **Build**: Optimized production build with TypeScript and ESLint validation
+- **Performance**: Fast global deployment with edge functions  
