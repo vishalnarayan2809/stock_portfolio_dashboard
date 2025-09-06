@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import { Upload, FileUp, X } from "lucide-react";
 
-type RawRow = { [k: string]: any };
+type RawRow = { [k: string]: unknown };
 export type UploadedStock = {
   symbol: string;
   name: string;
@@ -148,7 +148,7 @@ export default function UploadPortfolio({
       setPreviewCount(mapped.length);
       saveToStorage(mapped); // Save to localStorage
       onUpload(mapped);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       setError("Failed to parse file. Make sure it's a valid Excel or CSV file.");
     }
@@ -286,7 +286,7 @@ export default function UploadPortfolio({
       <div className="mt-3 text-xs text-slate-500 leading-relaxed">
         <strong>Expected columns:</strong> symbol, name, purchasePrice, quantity, exchange, sector
         <br />
-        <em>Note:</em> Column names are case-insensitive. Alternative names like "ticker", "qty", "shares" are also accepted.
+        <em>Note:</em> Column names are case-insensitive. Alternative names like &quot;ticker&quot;, &quot;qty&quot;, &quot;shares&quot; are also accepted.
       </div>
     </div>
   );

@@ -65,7 +65,7 @@ const totalValue = data.reduce((s, d) => s + (d.value ?? 0), 0) || 1;
               labelLine={false}
             >
               {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={`url(#grad-${index % COLORS.length})`} />
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="none" />
               ))}
             </Pie>
             <Tooltip
@@ -105,7 +105,7 @@ const totalValue = data.reduce((s, d) => s + (d.value ?? 0), 0) || 1;
             <Legend
               iconType="circle"
               wrapperStyle={{ paddingTop: 16 }}
-              formatter={(value) => <span className="text-[11px] tracking-wide text-slate-300">{value}</span> as any}
+              formatter={(value) => <span className="text-[11px] tracking-wide text-slate-300">{value}</span>}
             />
           </PieChart>
         </ResponsiveContainer>

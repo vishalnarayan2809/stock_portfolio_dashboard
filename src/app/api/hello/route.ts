@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import yahooFinance from "yahoo-finance2";
 
-const mockPrices: Record<string,number> = {
-    TCS: 3500,
-    INFY: 1600,
-    HDFCBANK: 1700
-}
+// Sample mock data for testing (unused for now)
+// const mockPrices: Record<string,number> = {
+//     TCS: 3500,
+//     INFY: 1600,
+//     HDFCBANK: 1700
+// }
 
 
 export async function GET(request: Request) {

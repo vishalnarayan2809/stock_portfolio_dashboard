@@ -14,7 +14,7 @@ export default function Home() {
     peRatio: number | null;
     earnings: number | null;
     cached?: boolean;
-    lastFetchedAt?: number;
+    lastFetchedAt?: number | null;
     error?: boolean;
   }
 
@@ -53,7 +53,14 @@ export default function Home() {
         if (json?.results) {
           const mapped: Record<string, StockData> = {};
           for (const [sym, val] of Object.entries(json.results)) {
-            const stockInfo = val as any;
+            const stockInfo = val as {
+              cmp?: number;
+              peRatio?: number;
+              earnings?: number;
+              cached?: boolean;
+              lastFetchedAt?: number;
+              error?: boolean;
+            };
             mapped[sym] = {
               cmp: stockInfo.cmp ?? null,
               peRatio: stockInfo.peRatio ?? null,
